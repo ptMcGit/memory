@@ -2,8 +2,6 @@
 
 # goals get a minimal game working
 
-
-
 require "pry"
 def create_grid(objects)
   (objects + objects).shuffle
@@ -88,6 +86,7 @@ end
 
 
 def create_guess_board(board)
+  # send in an array and get back a hash
   Hash[board.to_a.map { |x| [x[0],nil] }]
 end
 
@@ -129,6 +128,10 @@ def print_new_line(size)
 end
 
 
+#def closest_sqrt_below(num)
+  
+#  until (guess ** 2)
+
 
 # def ceilinged_square_root(num)
 #   guess = num / 2
@@ -157,10 +160,17 @@ end
 #end
 
 
-def  get_response
+def  get_valid_input(valid_input)
   print "What is your guess? (q to quit)"
-  response = gets.chomp.to_i
+  until valid_input.include? response = gets.chomp
+    print "Please enter a valid selection."
+    binding.pry
+  end
+  return response
+end
 
+def array_of_nums_as_strings(num_array)
+  num_array.map { |x| x.to_s }
 end
 
 prog_exit = false
@@ -173,8 +183,9 @@ until prog_exit
   # start the game
   until game_end
     #  board = create_board(load_objects)
-
-    board = create_board(["a","b","c","d","e"])
+    data = ["a","b","c","d","e"]
+    board_size = data.length * 2
+    board = create_board(data)
 
 
     #guesses = create_guess_board(board)
@@ -195,31 +206,40 @@ until prog_exit
       until no_more_tries
         puts "Lives #{lives} Remaining:"
         print_board(board, correct_guesses, turn_guesses)
-        #binding.pry
-        turn_guesses.push (guess = get_response)
-        tries -= 1
+        response = get_valid_input(
+          ["q"] +
+          array_of_nums_as_strings((1..board_size).to_a - correct_guesses)
+        )
+
+        if response == "q";
+          dead = true
+          break
+        end
+          turn_guesses.push 
+          #binding.pry
+          tries -= 1
         #guesses[guess] = board[guess]
         #binding.pry
 
         #binding.pry
-        print_board(board, correct_guesses, turn_guesses)
+          print_board(board, correct_guesses, turn_guesses)
         #binding.pry
         #lives -= 1
         #correct_guesses = guesses.to_a.select{ |x| x[1] != nil}
 
-        if tries == 0
+          if tries == 0
           #binding.pry
-          puts "End of turn"
-          sleep 1
+            puts "End of turn"
+            sleep 1
           #binding.pry
 
 
 
           #resolved_guesses = resolve_guesses(board, turn_guesses)
-          binding.pry
+          #binding.pry
           if guesses_good(board, turn_guesses)
             correct_guesses.concat turn_guesses
-            binding.pry
+            #binding.pry
           else
             lives -= 1
           end
