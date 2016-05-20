@@ -89,8 +89,8 @@ def print_board(board, correct_guesses, turn_guesses)
     else
       print " [", (x.to_s.center size_of_block), "] "
     end
-    if count % print_new_line(size) == 0
-      
+    if count % close_perfect_square_root(size)  == 0
+      #binding.pry
       print "\n"
     end
     count += 1
@@ -103,6 +103,9 @@ def print_new_line(size)
   # return the closest perfect square of size * 2
   return 3
 end
+
+
+
 
 
 #def closest_sqrt_below(num)
@@ -118,6 +121,13 @@ end
 #     return guess + 1
 # end
 
+def close_perfect_square_root(num)
+  guess = 1
+  until ((guess + 1) ** 2) > num 
+    guess += 1
+  end
+  return guess
+end
 
 def  get_valid_input(valid_input)
   print "What is your guess? (q to quit)"
@@ -142,7 +152,7 @@ until prog_exit
   # start the game
   until game_end
     #  board = create_board(load_objects)
-    data = ["a","b","c","d","e"]
+    data = ("a".."d").to_a
     board_size = data.length * 2
     board = create_board(data)
     lives = set_lives(board, false)
@@ -204,7 +214,7 @@ until prog_exit
       puts "Goodbye!"
       break
     end
-    nextt
+    next
 
     
   end
