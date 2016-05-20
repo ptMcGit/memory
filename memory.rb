@@ -4,6 +4,12 @@
 
 require "pry"
 
+system("clear")
+
+def did_win?(board, correct_guesses)
+  board.map { |key, value| key } == correct_guesses.sort
+end
+
 def end_game(board)
   puts "The game has ended."
   #reveal_board
@@ -19,7 +25,12 @@ def end_game(board)
 end
 
 def set_lives(board, difficulty)
-  5
+  lives = 5
+  #return (0..lives).to_a
+end
+
+def set_tries(tries_option)
+  tries = 2
 end
 
 def create_grid(objects)
@@ -37,7 +48,8 @@ def create_board(objects)
 end
 
 def load_data
-  ["a", "b", "c", "d"]
+  #["a", "b", "c", "d"]
+  ("a".."z").to_a
 end
 
 def guesses_good(board, turn_guesses)
@@ -46,47 +58,15 @@ def guesses_good(board, turn_guesses)
 end
 
 
-# def resolve_guesses(board, turn_guesses)
-#   b = {}
-#   h = Hash[board.select { |x,y| turn_guesses.include? x }].map { |x,y| b[y]=[x] }
-#   #[a]
-#   resolved_guesses = board.select { |x,y| turn_guesses.include? x }.map { |x,y| y }
-#   #resolved_guesses.each
-#   totals = Hash.new(0)
-#   totals.each do |x|
-#     totals[x] += 1
-#   end
-#   totals.select do |x|
-#     x > 1
-#   end
-#   binding.pry
-# end
-
-#  items.uniq.count == 1
-#end  
-  
-#   board.select do |x,y|
-#     [2,8].include? x
-#   end
-#   turn_guesses.uniq.count == 1
-# end
- 
-  
-  # guesses = hash1.to_a.select do |x|
-  #   x[1]
-  # end
-  #binding.pry
-#  guesses.map { |x,y| y }.uniq.count == 1
-#end
-
 def print_board(board, correct_guesses, turn_guesses)
   size = board.count
   size_of_block = board.to_a.last[0].to_s.length
   count = 1
-  
+
   board.map { |key, value| key }.each do |x|
     if (correct_guesses + turn_guesses).include? x
       print " [", (board[x].center size_of_block), "] "
+      #binding.pry
     else
       print " [", (x.to_s.center size_of_block), "] "
     end
@@ -105,32 +85,15 @@ def print_new_line(size)
   return 3
 end
 
-
-
-
-
-#def closest_sqrt_below(num)
-  
-#  until (guess ** 2)
-
-
-# def ceilinged_square_root(num)
-#   guess = num / 2
-#   until (guess ** 2) < num && num > ((guess + 1) ** 2)
-#     guess += 1
-#   end
-#     return guess + 1
-# end
-
 def close_perfect_square_root(num)
   guess = 1
-  until ((guess + 1) ** 2) > num 
+  until ((guess + 1) ** 2) > num
     guess += 1
   end
   return guess
 end
 
-def  get_valid_input(valid_input)
+def get_valid_input(valid_input)
   print "What is your guess? (q to quit)"
   until valid_input.include? response = gets.chomp
     print "Please enter a valid selection: "
@@ -145,39 +108,48 @@ end
 
 prog_exit = false
 
+# Main program
+
 until prog_exit
+
+  ## Menu
+
+  ### Quit
+
+  ### New Game
 
   game_end = false
 
-  # start the game
-  until game_end
-    #  board = create_board(load_objects)
-    data = load_data
-    board_size = data.length * 2
-    board = create_board(data)
-    lives = set_lives(board, false)
+  ### Load Data
 
+
+  ### Start The Game
+
+  until game_end
+
+    data = load_data
+    board = create_board(data)
+    board_size = data.length * 2
+    lives = set_lives(board, nil)
     dead = false
+    correct_guesses = []
 
     # board created now start turns
 
-    correct_guesses = []
-    until dead
+    until dead do
 
-      #print_board(correct_guesses)
       turn_guesses = []
-      tries = 2
+      tries = set_tries(nil)
       no_more_tries = false
 
       until no_more_tries
-
-        if lives == 0
-          dead = true
-          break
-        end
-        
-        puts "Lives #{lives} Remaining:"
+        #binding.pry
+        system("clear")
+        print "You have #{lives} " + "li" + (lives > 1 ? "ves" : "fe") + " remaining.\n"
         print_board(board, correct_guesses, turn_guesses)
+        puts "#{tries}"
+
+        #binding.pry
         response = get_valid_input(
           ["q"] +
           array_of_nums_as_strings((1..board_size).to_a - correct_guesses - turn_guesses)
@@ -188,28 +160,42 @@ until prog_exit
           break
         else
           turn_guesses.push response.to_i
-          #binding.pry
-          print_board(board, correct_guesses, turn_guesses)
-          tries -= 1
-
         end
+        tries -= 1
         if tries == 0
           no_more_tries = true
-          
-          if guesses_good(board, turn_guesses)
-            correct_guesses.concat turn_guesses
-          else
-            lives -= 1
-          end
-
-          puts "End of turn"
-          sleep 1
         end
+        
       end
-    end
-    print_board(board, (1..board_size).to_a, [])
 
-    if end_game(nil)
+      if guesses_good(board, turn_guesses)
+        correct_guesses.concat turn_guesses
+      else
+        lives -= 1
+      end
+
+      print_board(board, correct_guesses, turn_guesses)
+      if lives == 0
+        dead = true
+      else
+        puts "End of turn. Press enter to continue."
+        gets
+      end
+      system("clear")
+
+    end
+
+    if did_win?(board, correct_guesses)
+      puts "Great job! You win!"
+    else
+      puts "Maybe next time..."
+      print_board(board, (1..board_size).to_a, [])
+    end
+
+    binding.pry
+    #correct_result =
+
+    if end_game(result)
       next
     else
       prog_exit = true
@@ -217,7 +203,5 @@ until prog_exit
       break
     end
     next
-
-    
   end
 end
