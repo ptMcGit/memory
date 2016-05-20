@@ -3,6 +3,25 @@
 # goals get a minimal game working
 
 require "pry"
+
+def end_game(board)
+  puts "The game has ended."
+  #reveal_board
+  print "Would you like to play again (y/n)? "
+  until ["y","n"].include?  r = gets.chomp
+    print "(y/n)? "
+  end
+  if r == "y"
+    return true
+  else
+    return false
+  end
+end
+
+def set_lives(board, difficulty)
+  5
+end
+
 def create_grid(objects)
   (objects + objects).shuffle
 end
@@ -163,7 +182,7 @@ end
 def  get_valid_input(valid_input)
   print "What is your guess? (q to quit)"
   until valid_input.include? response = gets.chomp
-    print "Please enter a valid selection."
+    print "Please enter a valid selection: "
     #binding.pry
   end
   return response
@@ -177,7 +196,7 @@ prog_exit = false
 
 until prog_exit
 
-  lives = 10
+
   game_end = false
 
   # start the game
@@ -186,10 +205,7 @@ until prog_exit
     data = ["a","b","c","d","e"]
     board_size = data.length * 2
     board = create_board(data)
-
-
-    #guesses = create_guess_board(board)
-    #correct_guesses = guesses.clone
+    lives = set_lives(board, false)
 
     dead = false
 
@@ -204,11 +220,17 @@ until prog_exit
       no_more_tries = false
 
       until no_more_tries
+
+        if lives == 0
+          dead = true
+          break
+        end
+        
         puts "Lives #{lives} Remaining:"
         print_board(board, correct_guesses, turn_guesses)
         response = get_valid_input(
           ["q"] +
-          array_of_nums_as_strings((1..board_size).to_a - correct_guesses)
+          array_of_nums_as_strings((1..board_size).to_a - correct_guesses - turn_guesses)
         )
 
         if response == "q";
@@ -235,5 +257,15 @@ until prog_exit
         end
       end
     end
+    if end_game(nil)
+      next
+    else
+      prog_exit = true
+      puts "Goodbye!"
+      break
+    end
+    nextt
+
+    
   end
 end
