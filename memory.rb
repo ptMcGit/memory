@@ -36,7 +36,7 @@ def create_board(objects)
   return board
 end
 
-def load_objects
+def load_data
   ["a", "b", "c", "d"]
 end
 
@@ -44,6 +44,7 @@ def guesses_good(board, turn_guesses)
   x = Hash[board.select { |x, y| turn_guesses.include? x }].map {|x,y| y}
   x[0] == x[1]
 end
+
 
 # def resolve_guesses(board, turn_guesses)
 #   b = {}
@@ -146,13 +147,12 @@ prog_exit = false
 
 until prog_exit
 
-
   game_end = false
 
   # start the game
   until game_end
     #  board = create_board(load_objects)
-    data = ("a".."d").to_a
+    data = load_data
     board_size = data.length * 2
     board = create_board(data)
     lives = set_lives(board, false)
@@ -207,6 +207,8 @@ until prog_exit
         end
       end
     end
+    print_board(board, (1..board_size).to_a, [])
+
     if end_game(nil)
       next
     else
