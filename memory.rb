@@ -2,8 +2,9 @@
 
 # goals get a minimal game working
 
-require "pry"
 
+
+require "pry"
 def create_grid(objects)
   (objects + objects).shuffle
 end
@@ -32,36 +33,93 @@ def combine_hashes(hash1, hash2)
   return hash2
 end
 
-
-def guesses_good(hash1)
-  guesses = hash1.to_a.select do |x|
-    x[1]
-  end
-  #binding.pry
-  guesses.map { |x,y| y }.uniq.count == 1
+def guesses_good(board, turn_guesses)
+  x = Hash[board.select { |x, y| turn_guesses.include? x }].map {|x,y| y}
+  x[0] == x[1]
 end
+
+
+
+# def resolve_guesses(board, turn_guesses)
+#   b = {}
+#   h = Hash[board.select { |x,y| turn_guesses.include? x }].map { |x,y| b[y]=[x] }
+#   #[a]
+#   resolved_guesses = board.select { |x,y| turn_guesses.include? x }.map { |x,y| y }
+#   #resolved_guesses.each
+#   totals = Hash.new(0)
+#   totals.each do |x|
+#     totals[x] += 1
+#   end
+#   totals.select do |x|
+#     x > 1
+#   end
+#   binding.pry
+# end
+
+# def reverse_guesses(board, items)
+#   binding.pry
+# end
   
+
+#def guesses_good(items)
+#  reverse_lookup(items[0]) == reverse_lookup(items[0])
+#end
+  
+  
+
+
+  
+#  items.uniq.count == 1
+#end  
+  
+#   board.select do |x,y|
+#     [2,8].include? x
+#   end
+#   turn_guesses.uniq.count == 1
+# end
+ 
+  
+  # guesses = hash1.to_a.select do |x|
+  #   x[1]
+  # end
+  #binding.pry
+#  guesses.map { |x,y| y }.uniq.count == 1
+#end
+
 
 def create_guess_board(board)
   Hash[board.to_a.map { |x| [x[0],nil] }]
 end
 
 
-def print_board(board)
+def print_board(board, correct_guesses, turn_guesses)
   size = board.count
   size_of_block = board.to_a.last[0].to_s.length
   count = 1
-  board.to_a.each do |x|
-    #print x[1] || x[0]
-    printf("%.2s ", x[1] || x[0].to_s)
-    #binding.pry
+  
+  board.map { |key, value| key }.each do |x|
+    if (correct_guesses + turn_guesses).include? x
+      printf("%.2s ", board[x])
+    else
+      printf("%.2s ", x.to_s)
+    end
     if count % print_new_line(size) == 0
+      
       print "\n"
     end
     count += 1
-
   end
   print "\n"
+
+  #board.to_a.each do |x|
+
+   # printf("%.2s ", x[1] || x[0].to_s)
+
+    #if count % print_new_line(size) == 0
+     # print "\n"
+    #end
+    #count += 1
+
 end
 
 
@@ -101,12 +159,13 @@ end
 
 def  get_response
   print "What is your guess? (q to quit)"
-  gets.chomp.to_i
+  response = gets.chomp.to_i
+
 end
 
 prog_exit = false
-until prog_exit
 
+until prog_exit
 
   lives = 10
   game_end = false
@@ -116,35 +175,36 @@ until prog_exit
     #  board = create_board(load_objects)
 
     board = create_board(["a","b","c","d","e"])
-    guesses = create_guess_board(board)
-    correct_guesses = guesses.clone
-    
+
+
+    #guesses = create_guess_board(board)
+    #correct_guesses = guesses.clone
+
     dead = false
 
     # board created now start turns
 
+    correct_guesses = []
     until dead
 
-      flip_over = false
       #print_board(correct_guesses)
-      turn_guesses = []  
+      turn_guesses = []
       tries = 2
       no_more_tries = false
 
       until no_more_tries
         puts "Lives #{lives} Remaining:"
-        print_board(combine_hashes(guesses, correct_guesses))
+        print_board(board, correct_guesses, turn_guesses)
+        #binding.pry
         turn_guesses.push (guess = get_response)
         tries -= 1
-        guesses[guess] = board[guess]
+        #guesses[guess] = board[guess]
         #binding.pry
 
         #binding.pry
-        print_board(combine_hashes(guesses, correct_guesses))
+        print_board(board, correct_guesses, turn_guesses)
         #binding.pry
         #lives -= 1
-
-        #binding.pry
         #correct_guesses = guesses.to_a.select{ |x| x[1] != nil}
 
         if tries == 0
@@ -152,14 +212,20 @@ until prog_exit
           puts "End of turn"
           sleep 1
           #binding.pry
-          if guesses_good(guesses)
-            correct_guesses = guesses.clone
+
+
+
+          #resolved_guesses = resolve_guesses(board, turn_guesses)
+          binding.pry
+          if guesses_good(board, turn_guesses)
+            correct_guesses.concat turn_guesses
+            binding.pry
           else
-            guesses = correct_guesses.clone
             lives -= 1
           end
           no_more_tries = true
-          
+          #binding.pry
+
         end
 
       end
