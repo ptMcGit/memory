@@ -164,7 +164,7 @@ def  get_valid_input(valid_input)
   print "What is your guess? (q to quit)"
   until valid_input.include? response = gets.chomp
     print "Please enter a valid selection."
-    binding.pry
+    #binding.pry
   end
   return response
 end
@@ -214,50 +214,26 @@ until prog_exit
         if response == "q";
           dead = true
           break
-        end
-          turn_guesses.push 
+        else
+          turn_guesses.push response.to_i
           #binding.pry
-          tries -= 1
-        #guesses[guess] = board[guess]
-        #binding.pry
-
-        #binding.pry
           print_board(board, correct_guesses, turn_guesses)
-        #binding.pry
-        #lives -= 1
-        #correct_guesses = guesses.to_a.select{ |x| x[1] != nil}
+          tries -= 1
 
-          if tries == 0
-          #binding.pry
-            puts "End of turn"
-            sleep 1
-          #binding.pry
-
-
-
-          #resolved_guesses = resolve_guesses(board, turn_guesses)
-          #binding.pry
+        end
+        if tries == 0
+          no_more_tries = true
+          
           if guesses_good(board, turn_guesses)
             correct_guesses.concat turn_guesses
-            #binding.pry
           else
             lives -= 1
           end
-          no_more_tries = true
-          #binding.pry
 
+          puts "End of turn"
+          sleep 1
         end
-
       end
-
-      #if lives == 0
-      #  game_end = true
-      #end
-
-
-      #if turn_guesses.uniq == 1
-      #  correct_guesses = guesses.clone
-      #end
     end
   end
 end
