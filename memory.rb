@@ -1,5 +1,18 @@
 # memory game
 
+def print_tries(tries)
+  print "Tries: "
+  colorize((" " + "\u2660".encode) * tries, 32)
+  print "\n"
+end
+
+def print_lives(lives)
+  print "Lives: "
+  colorize((" " + "\u2665".encode) * lives, 31)
+  print "\n"
+end
+
+
 def clear_screen
   system("clear")
 end
@@ -9,7 +22,7 @@ def did_win?(board, correct_guesses)
 end
 
 def end_game(board)
-  print "The game has ended.\n\n"
+  print "\n"
   print "Would you like to play again (y/n)? "
   until ["y","n"].include?  r = gets.chomp
     print "(y/n)? "
@@ -40,12 +53,20 @@ end
 
 def load_data
   ["a", "b", "c"]
-  #("a".."z").to_a
+  ("a".."z").to_a
 end
 
 def guesses_good(board, turn_guesses)
   x = Hash[board.select { |x, y| turn_guesses.include? x }].map {|x,y| y}
   x[0] == x[1]
+end
+
+def colorize(string, color)
+  print "\e[" + color.to_s + ";1m" + string + "\e[0m"
+end
+
+def print_title
+  colorize("\nM e M o r y\n\n", 35)
 end
 
 def print_board(board, correct_guesses, turn_guesses)
@@ -54,12 +75,12 @@ def print_board(board, correct_guesses, turn_guesses)
 
   board.map { |key, value| key }.each do |x|
     if (correct_guesses + turn_guesses).include? x
-      print " [", (board[x].center card_width), "] "
+      colorize(" [ " +  (board[x].center card_width) + " ] ", 31)
     else
-      print " [", (x.to_s.center card_width), "] "
+      print " [ ", (x.to_s.center card_width), " ] "
     end
     if count % close_perfect_square_root(board.count)  == 0
-      print "\n"
+      print "\n\n"
     end
     count += 1
   end
@@ -68,14 +89,14 @@ end
 
 def close_perfect_square_root(num)
   guess = 1
-  until ((guess + 1) ** 2) > num
+  until (guess ** 2) > num
     guess += 1
   end
   return guess
 end
 
 def get_valid_input(valid_input)
-  print "What is your guess? (q to quit)"
+  print "What is your guess? (q to quit) "
   until valid_input.include? response = gets.chomp
     print "Please enter a valid selection: "
   end
@@ -119,9 +140,12 @@ until prog_exit
 
       until no_more_tries
         clear_screen
-        print "You have #{lives} " + "li" + (lives > 1 ? "ves" : "fe") + " remaining.\n\n"
+        print_title
         print_board(board, correct_guesses, turn_guesses)
-        puts "Tries: #{tries}\n\n"
+        print "\n"
+        print_tries(tries)
+        print_lives(lives)
+        print "\n"
 
         scored = false
 
@@ -168,14 +192,16 @@ until prog_exit
     end
 
     clear_screen
+    print_title
+    print_board(board, (1..board_size).to_a, [])
+    print "\n"
 
     if win
-      print "Great job! You win!\n\n"
+      print "Great job! You win!\n"
     else
-      print "Maybe next time...\n\n"
+      print "You lose. Maybe next time...\n"
     end
 
-    print_board(board, (1..board_size).to_a, [])
 
     if end_game(nil)
       next
