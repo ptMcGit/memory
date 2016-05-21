@@ -9,22 +9,16 @@ def did_win?(board, correct_guesses)
 end
 
 def end_game(board)
-  puts "The game has ended."
-  #reveal_board
+  print "The game has ended.\n\n"
   print "Would you like to play again (y/n)? "
   until ["y","n"].include?  r = gets.chomp
     print "(y/n)? "
   end
-  if r == "y"
-    return true
-  else
-    return false
-  end
+  return r == "y"
 end
 
 def set_lives(board, difficulty)
   lives = 5
-  #return (0..lives).to_a
 end
 
 def set_tries(tries_option)
@@ -42,7 +36,6 @@ def create_board(objects)
   objects = create_grid(objects)
   size = objects.length
   board = Hash[(1..size).map { |x| [x, objects.pop]}]
-  return board
 end
 
 def load_data
@@ -56,28 +49,21 @@ def guesses_good(board, turn_guesses)
 end
 
 def print_board(board, correct_guesses, turn_guesses)
-  size = board.count
-  size_of_block = board.to_a.last[0].to_s.length
+  card_width = board.to_a.last[0].to_s.length
   count = 1
 
   board.map { |key, value| key }.each do |x|
     if (correct_guesses + turn_guesses).include? x
-      print " [", (board[x].center size_of_block), "] "
+      print " [", (board[x].center card_width), "] "
     else
-      print " [", (x.to_s.center size_of_block), "] "
+      print " [", (x.to_s.center card_width), "] "
     end
-    if count % close_perfect_square_root(size)  == 0
+    if count % close_perfect_square_root(board.count)  == 0
       print "\n"
     end
     count += 1
   end
   print "\n"
-end
-
-
-def print_new_line(size)
-  # return the closest perfect square of size * 2
-  return 3
 end
 
 def close_perfect_square_root(num)
@@ -133,32 +119,29 @@ until prog_exit
 
       until no_more_tries
         clear_screen
-        print "You have #{lives} " + "li" + (lives > 1 ? "ves" : "fe") + " remaining.\n"
+        print "You have #{lives} " + "li" + (lives > 1 ? "ves" : "fe") + " remaining.\n\n"
         print_board(board, correct_guesses, turn_guesses)
-        puts "#{tries}"
+        puts "Tries: #{tries}\n\n"
 
         scored = false
 
+        if did_win?(board, correct_guesses)
+          win = true
+          game_over = true
+          break
+        elsif lives == 0
+          win = false
+          game_over = true
+          break
+        end
 
-          if did_win?(board, correct_guesses)
-            won = true
-            game_over = true
-            break
-          elsif lives == 0
-            won = false
-            game_over = true
-            break
+        if tries == 0
+          if lives > 1
+            print "End of turn. Press enter to continue ... "
+            gets
           end
-
-
-          if tries == 0
-            if lives > 1
-              print "End of turn. Press enter to continue ... "
-              gets
-      
-            end
-            break
-          else
+          break
+        else
           response = get_valid_input(
             ["q"] +
             array_of_nums_as_strings((1..board_size).to_a - correct_guesses - turn_guesses)
@@ -182,20 +165,14 @@ until prog_exit
       unless scored
         lives -= 1
       end
-
-            #print_board(board, correct_guesses, turn_guesses)
-      #else
-      #  puts "End of turn. Press enter to continue."
-      #  gets
-
     end
 
     clear_screen
 
-    if won
-      puts "Great job! You won!"
+    if win
+      print "Great job! You win!\n\n"
     else
-      puts "Maybe next time..."
+      print "Maybe next time...\n\n"
     end
 
     print_board(board, (1..board_size).to_a, [])
