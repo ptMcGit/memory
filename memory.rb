@@ -123,9 +123,9 @@ until prog_exit
     lives = set_lives(board, nil)
     correct_guesses = []
 
-    dead = false
+    game_over = false
 
-    until dead do
+    until game_over do
 
       turn_guesses = []
       tries = set_tries(nil)
@@ -137,11 +137,28 @@ until prog_exit
         print_board(board, correct_guesses, turn_guesses)
         puts "#{tries}"
 
-        if tries == 0
-          print "End of turn. Press enter to continue ... "
-          gets
-          break
-        else
+        scored = false
+
+
+          if did_win?(board, correct_guesses)
+            won = true
+            game_over = true
+            break
+          elsif lives == 0
+            won = false
+            game_over = true
+            break
+          end
+
+
+          if tries == 0
+            if lives > 1
+              print "End of turn. Press enter to continue ... "
+              gets
+      
+            end
+            break
+          else
           response = get_valid_input(
             ["q"] +
             array_of_nums_as_strings((1..board_size).to_a - correct_guesses - turn_guesses)
@@ -149,38 +166,39 @@ until prog_exit
         end
 
         if response == "q";
-          dead = true
+          game_over = true
           break
         else
           turn_guesses.push response.to_i
         end
         tries -= 1
+
+        if guesses_good(board, turn_guesses)
+          correct_guesses.concat turn_guesses
+          scored = true
+        end
       end
 
-      if guesses_good(board, turn_guesses)
-        correct_guesses.concat turn_guesses
-      else
+      unless scored
         lives -= 1
       end
 
-      #print_board(board, correct_guesses, turn_guesses)
-      if lives == 0
-        dead = true
+            #print_board(board, correct_guesses, turn_guesses)
       #else
       #  puts "End of turn. Press enter to continue."
       #  gets
-      end
 
     end
 
     clear_screen
-    
-    if did_win?(board, correct_guesses)
-      puts "Great job! You win!"
+
+    if won
+      puts "Great job! You won!"
     else
       puts "Maybe next time..."
-      print_board(board, (1..board_size).to_a, [])
     end
+
+    print_board(board, (1..board_size).to_a, [])
 
     if end_game(nil)
       next
