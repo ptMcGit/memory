@@ -1,8 +1,8 @@
 # memory game
 
-# goals get a minimal game working
-
-system("clear")
+def clear_screen
+  system("clear")
+end
 
 def did_win?(board, correct_guesses)
   board.map { |key, value| key } == correct_guesses.sort
@@ -46,16 +46,14 @@ def create_board(objects)
 end
 
 def load_data
-  #["a", "b", "c", "d"]
-  ("a".."z").to_a
+  ["a", "b", "c"]
+  #("a".."z").to_a
 end
 
 def guesses_good(board, turn_guesses)
   x = Hash[board.select { |x, y| turn_guesses.include? x }].map {|x,y| y}
   x[0] == x[1]
 end
-
-
 
 def print_board(board, correct_guesses, turn_guesses)
   size = board.count
@@ -106,20 +104,13 @@ prog_exit = false
 
 # Main program
 
+clear_screen
+
 until prog_exit
 
-  ## Menu
-
-  ### Quit
-
-  ### New Game
+  # start menu stuff
 
   game_end = false
-
-  ### Load Data
-
-
-#until prog_exit
 
   ### Start The Game
 
@@ -128,11 +119,11 @@ until prog_exit
     data = load_data
     board = create_board(data)
     board_size = data.length * 2
+
     lives = set_lives(board, nil)
-    dead = false
     correct_guesses = []
 
-    # board created now start turns
+    dead = false
 
     until dead do
 
@@ -141,15 +132,21 @@ until prog_exit
       no_more_tries = false
 
       until no_more_tries
-        system("clear")
+        clear_screen
         print "You have #{lives} " + "li" + (lives > 1 ? "ves" : "fe") + " remaining.\n"
         print_board(board, correct_guesses, turn_guesses)
         puts "#{tries}"
 
-        response = get_valid_input(
-          ["q"] +
-          array_of_nums_as_strings((1..board_size).to_a - correct_guesses - turn_guesses)
-        )
+        if tries == 0
+          print "End of turn. Press enter to continue ... "
+          gets
+          break
+        else
+          response = get_valid_input(
+            ["q"] +
+            array_of_nums_as_strings((1..board_size).to_a - correct_guesses - turn_guesses)
+          )
+        end
 
         if response == "q";
           dead = true
@@ -158,11 +155,6 @@ until prog_exit
           turn_guesses.push response.to_i
         end
         tries -= 1
-        if tries == 0
-          no_more_tries = true
-
-        end
-        
       end
 
       if guesses_good(board, turn_guesses)
@@ -171,17 +163,18 @@ until prog_exit
         lives -= 1
       end
 
-      print_board(board, correct_guesses, turn_guesses)
+      #print_board(board, correct_guesses, turn_guesses)
       if lives == 0
         dead = true
-      else
-        puts "End of turn. Press enter to continue."
-        gets
+      #else
+      #  puts "End of turn. Press enter to continue."
+      #  gets
       end
-      system("clear")
 
     end
 
+    clear_screen
+    
     if did_win?(board, correct_guesses)
       puts "Great job! You win!"
     else
