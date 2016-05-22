@@ -96,9 +96,7 @@ end
 
 
 def get_valid_input(prompt, valid_input)
-  #def get_valid_input(valid_input)
   print prompt
-  #print "What is your guess? (q to quit) "
   until valid_input.include? response = gets.chomp
     print "Please enter a valid selection: "
   end
@@ -109,13 +107,16 @@ def array_of_nums_as_strings(num_array)
   num_array.map { |x| x.to_s }
 end
 
-prog_exit = false
+def exit_program
+  puts "Goodbye!"
+  exit
+end
 
 # Main program
 
 clear_screen
 
-until prog_exit
+while true
 
   # start menu stuff
 
@@ -130,9 +131,14 @@ until prog_exit
     "Select an option: ",
     (1..3).to_s
   )
- 
-    
-  
+
+  case response
+  when "2"
+    difficulty = set_difficulty
+  when "3"
+    exit_program
+  end
+
   ### Start The Game
 
   until game_end
@@ -228,10 +234,8 @@ until prog_exit
     if response == "y"
       next
     else
-      prog_exit = true
-      puts "Goodbye!"
-      break
-    end     
+      exit_program
+    end
     next
   end
 end
