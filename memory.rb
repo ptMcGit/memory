@@ -94,8 +94,11 @@ def to_be_square(num)
   guess
 end
 
-def get_valid_input(valid_input)
-  print "What is your guess? (q to quit) "
+
+def get_valid_input(prompt, valid_input)
+  #def get_valid_input(valid_input)
+  print prompt
+  #print "What is your guess? (q to quit) "
   until valid_input.include? response = gets.chomp
     print "Please enter a valid selection: "
   end
@@ -120,7 +123,16 @@ until prog_exit
   wins = 0
   losses = 0
 
+  print_title
 
+  response = get_valid_input(
+    "(1) Play (2) Options (3) Quit\n" +
+    "Select an option: ",
+    (1..3).to_s
+  )
+ 
+    
+  
   ### Start The Game
 
   until game_end
@@ -168,6 +180,7 @@ until prog_exit
           break
         else
           response = get_valid_input(
+            "What is your guess? (q to quit) ",
             ["q"] +
             array_of_nums_as_strings((1..board_size).to_a - correct_guesses - turn_guesses)
           )
@@ -207,13 +220,18 @@ until prog_exit
 
     print "(wins: #{wins}, losses: #{losses})"
 
-    if end_game(nil)
+    response = get_valid_input(
+      "Would you like to play again (y/n)? ",
+      ["y","n"]
+    )
+
+    if response == "y"
       next
     else
       prog_exit = true
       puts "Goodbye!"
       break
-    end
+    end     
     next
   end
 end
