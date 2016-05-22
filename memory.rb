@@ -12,7 +12,6 @@ def print_lives(lives)
   print "\n"
 end
 
-
 def clear_screen
   system("clear")
 end
@@ -31,7 +30,7 @@ def end_game(board)
 end
 
 def set_lives(board, difficulty)
-  lives = 5
+  lives = 6
 end
 
 def set_tries(tries_option)
@@ -52,8 +51,8 @@ def create_board(objects)
 end
 
 def load_data
-  ["a", "b", "c"]
-  ("a".."z").to_a
+  #["a", "b", "c", "d", "e","f"]
+  ("a".."e").to_a
 end
 
 def guesses_good(board, turn_guesses)
@@ -79,7 +78,7 @@ def print_board(board, correct_guesses, turn_guesses)
     else
       print " [ ", (x.to_s.center card_width), " ] "
     end
-    if count % close_perfect_square_root(board.count)  == 0
+    if count % to_be_square(board.count)  == 0
       print "\n\n"
     end
     count += 1
@@ -87,12 +86,12 @@ def print_board(board, correct_guesses, turn_guesses)
   print "\n"
 end
 
-def close_perfect_square_root(num)
-  guess = 1
-  until (guess ** 2) > num
-    guess += 1
+def to_be_square(num)
+  guess = Math.sqrt(num).round
+  if guess % 2 != 0
+    guess -= 1
   end
-  return guess
+  guess
 end
 
 def get_valid_input(valid_input)
@@ -118,6 +117,9 @@ until prog_exit
   # start menu stuff
 
   game_end = false
+  wins = 0
+  losses = 0
+
 
   ### Start The Game
 
@@ -137,6 +139,7 @@ until prog_exit
       turn_guesses = []
       tries = set_tries(nil)
       no_more_tries = false
+      scored = false
 
       until no_more_tries
         clear_screen
@@ -146,8 +149,6 @@ until prog_exit
         print_tries(tries)
         print_lives(lives)
         print "\n"
-
-        scored = false
 
         if did_win?(board, correct_guesses)
           win = true
@@ -198,10 +199,13 @@ until prog_exit
 
     if win
       print "Great job! You win!\n"
+      wins += 1
     else
       print "You lose. Maybe next time...\n"
+      losses += 1
     end
 
+    print "(wins: #{wins}, losses: #{losses})"
 
     if end_game(nil)
       next
