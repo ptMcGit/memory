@@ -44,7 +44,8 @@ def end_game(board)
 end
 
 def set_lives(board, difficulty)
-  lives = ((board.count - ((difficulty.to_f / board.count)).floor) - difficulty).to_i
+  lives = (board.count / 2 - ((difficulty - 1) * 2)).to_i
+  #lives = ((board.count - ((difficulty.to_f / board.count)).floor) - difficulty).to_i
   #lives = 6
 end
 
@@ -282,7 +283,7 @@ while true
         end
 
         if tries == 0
-          if lives > 1
+          if (lives > 1) && (! scored)
             print "End of turn. Press enter to continue ... "
             gets
           end
