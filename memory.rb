@@ -135,13 +135,24 @@ def set_difficulty
   return response.to_i
 end
 
+def get_custom_grid_size
+  response = get_valid_input(
+    "\Set the number of different cards (e.g. 6 for 12 cards): ",
+    ("2".."20").to_a
+  )
+end
+
 def set_grid_size
   clear_screen
   print_title
   response = get_valid_input(
-    "\t(1) 4 x 4\n\t(2) 6 x 6 \n\t(3) 8 x 8\n\nSelect option: ",
-    ("1".."3").to_a
+    "\t(1) 12 cards (4 x 3)\n\t(2) 16 cards (4 x 4) \n\t(3) 20 cards (5 x 4)\n\t(4) Custom\n\n" +
+    "Select option: ",
+    ("1".."4").to_a
   )
+  if response == "4"
+    return get_custom_grid_size.to_i
+  end
   return get_grid_size(response.to_i)
 end
 
