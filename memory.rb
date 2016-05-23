@@ -100,12 +100,42 @@ def print_board(board, correct_guesses, turn_guesses)
 end
 
 def to_be_square(num)
-  guess = Math.sqrt(num).round
-  if guess % 2 != 0
-    guess += 1
+  golden = 13/7.0
+  divisor = 1
+  mults = [] 
+  result = num/divisor
+  #binding.pry
+  while true 
+    #binding.pry
+    divisor += 1    
+    if (num/divisor.to_f) == (num/divisor)
+      mults.push [divisor, result = num/divisor.to_f]
+      if (divisor.to_f / result) > golden
+        break
+      end
+    end
+
   end
-  guess
+  if mults.count > 1
+    high = mults.reverse[0]
+    low = mults.reverse[1]
+
+    diff_high = (high[0]/high[1] - golden) / golden
+    diff_low = (golden - low[0]/low[1]) / (low[0]/low[1])
+
+    return (diff_high > diff_low ? high[0] : low[0])
+  else
+    return mults.flatten.last
+  end
 end
+
+# def to_be_square(num)
+#   guess = Math.sqrt(num).round
+#   if guess % 2 != 0
+#     guess += 1
+#   end
+#   guess
+# end
 
 
 def get_valid_input(prompt, valid_input)
