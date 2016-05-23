@@ -65,9 +65,8 @@ def create_board(objects)
   board = Hash[(1..size).map { |x| [x, objects.pop]}]
 end
 
-def load_data
-  #["a", "b", "c", "d", "e","f"]
-  ("a".."h").to_a
+def load_data(size)
+  ("A".."Z").to_a.slice 0, size
 end
 
 def guesses_good(board, turn_guesses)
@@ -98,7 +97,6 @@ def print_board(board, correct_guesses, turn_guesses)
     end
     count += 1
   end
-  print "\n"
 end
 
 def to_be_square(num)
@@ -129,13 +127,43 @@ end
 
 def set_difficulty
   response = get_valid_input(
-    "(1) Easy\n(2) Medium\n(3) Hard\n\nSelect difficulty: ",
-    (1..3).to_s
+    "\t(1) Easy\n\t(2) Medium\n\t(3) Hard\n\nSelect difficulty: ",
+    ("1".."3").to_a
   )
   return response.to_i
 end
 
+def set_grid_size
+  response = get_valid_input(
+    "\t(1) 4 x 4\n\t(2) 6 x 6 \n\t(3) 8 x 8\nSelect option: ",
+    ("1".."3").to_a
+  )
+  return get_grid_size(response.to_i)
+end
 
+def get_grid_size(key)
+  x = [
+    6,
+    8,
+    10
+  ]
+  return x[key - 1]
+end
+
+def set_options(difficulty, data)
+  response = get_valid_input(
+    "\t(1) Set difficulty\n\t(2) Set grid size\n\nSelect option: ",
+    ["1", "2"]
+  )
+ 
+  case response
+  when "1"
+    difficulty = set_difficulty
+  when "2"
+    data = load_data(set_grid_size)
+  end
+  return difficulty, data
+end
 
 # Main program
 
@@ -152,16 +180,19 @@ while true
   print_title
 
   response = get_valid_input(
-    "(1) Play (2) Options (3) Quit\n" +
+    "\t(1) Play\n\t(2) Options\n\t(3) Quit\n\n" +
     "Select an option: ",
-    (1..3).to_s
+    ("1".."3").to_a
   )
 
+  # default options
+  
   difficulty = 1
+  data = load_data(get_grid_size(1))
 
   case response
   when "2"
-    difficulty = set_difficulty
+    difficulty, data = set_options(difficulty, data)
   when "3"
     exit_program
   end
@@ -170,7 +201,6 @@ while true
 
   until game_end
 
-    data = load_data
     board = create_board(data)
     board_size = data.length * 2
 
@@ -190,7 +220,6 @@ while true
         clear_screen
         print_title
         print_board(board, correct_guesses, turn_guesses)
-        print "\n"
         print_tries(tries)
         print_lives(lives)
         print "\n"
@@ -241,7 +270,6 @@ while true
     clear_screen
     print_title
     print_board(board, (1..board_size).to_a, [])
-    print "\n"
 
     if win
       print "Great job! You win!\n"
