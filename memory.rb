@@ -1,5 +1,19 @@
 # memory game
 
+require "pry"
+
+def create_w_file(file_name)
+  File.open(file_name, "a")
+end
+
+scores = create_w_file("memory_scores")
+
+def save_scores(cards, tries, lives, result, file)
+  file.write(
+    "Cards: #{cards}, Tries: #{tries}, Lives: #{lives}, Result: #{result}\n"
+  )
+end
+
 def print_tries(tries)
   print "Tries: "
   colorize((" " + "\u2660".encode) * tries, 32)
@@ -30,7 +44,8 @@ def end_game(board)
 end
 
 def set_lives(board, difficulty)
-  lives = 6
+  lives = ((board.count - (difficulty.to_f / board.count)).floor).to_i
+  #lives = 6
 end
 
 def set_tries(tries_option)
@@ -52,7 +67,7 @@ end
 
 def load_data
   #["a", "b", "c", "d", "e","f"]
-  ("a".."e").to_a
+  ("a".."h").to_a
 end
 
 def guesses_good(board, turn_guesses)
@@ -89,7 +104,7 @@ end
 def to_be_square(num)
   guess = Math.sqrt(num).round
   if guess % 2 != 0
-    guess -= 1
+    guess += 1
   end
   guess
 end
@@ -112,6 +127,16 @@ def exit_program
   exit
 end
 
+def set_difficulty
+  response = get_valid_input(
+    "(1) Easy\n(2) Medium\n(3) Hard\n\nSelect difficulty: ",
+    (1..3).to_s
+  )
+  return response.to_i
+end
+
+
+
 # Main program
 
 clear_screen
@@ -132,6 +157,8 @@ while true
     (1..3).to_s
   )
 
+  difficulty = 1
+
   case response
   when "2"
     difficulty = set_difficulty
@@ -147,7 +174,7 @@ while true
     board = create_board(data)
     board_size = data.length * 2
 
-    lives = set_lives(board, nil)
+    lives = set_lives(board, difficulty)
     correct_guesses = []
 
     game_over = false
@@ -223,6 +250,14 @@ while true
       print "You lose. Maybe next time...\n"
       losses += 1
     end
+
+    save_scores(
+      board.count,
+      set_tries(difficulty),
+      set_lives(board, difficulty),
+      (win ? "win" : "loss"),
+      scores
+    )
 
     print "(wins: #{wins}, losses: #{losses})"
 
