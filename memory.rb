@@ -44,7 +44,7 @@ def end_game(board)
 end
 
 def set_lives(board, difficulty)
-  lives = ((board.count - (difficulty.to_f / board.count)).floor).to_i
+  lives = ((board.count - ((difficulty.to_f / board.count)).floor) - difficulty).to_i
   #lives = 6
 end
 
@@ -126,6 +126,8 @@ def exit_program
 end
 
 def set_difficulty
+  clear_screen
+  print_title
   response = get_valid_input(
     "\t(1) Easy\n\t(2) Medium\n\t(3) Hard\n\nSelect difficulty: ",
     ("1".."3").to_a
@@ -134,8 +136,10 @@ def set_difficulty
 end
 
 def set_grid_size
+  clear_screen
+  print_title
   response = get_valid_input(
-    "\t(1) 4 x 4\n\t(2) 6 x 6 \n\t(3) 8 x 8\nSelect option: ",
+    "\t(1) 4 x 4\n\t(2) 6 x 6 \n\t(3) 8 x 8\n\nSelect option: ",
     ("1".."3").to_a
   )
   return get_grid_size(response.to_i)
@@ -151,6 +155,8 @@ def get_grid_size(key)
 end
 
 def set_options(difficulty, data)
+  clear_screen
+  print_title
   response = get_valid_input(
     "\t(1) Set difficulty\n\t(2) Set grid size\n\nSelect option: ",
     ["1", "2"]
