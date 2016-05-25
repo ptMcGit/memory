@@ -84,10 +84,10 @@ def print_title
 end
 
 def print_board(board, correct_guesses, turn_guesses)
-  card_width = board.to_a.last[0].to_s.length
+  card_width = board.flatten.max_by { |x| x.to_s.length }.to_s.length
+  binding.pry
   count = 1
-
-  board.map { |key, value| key }.each do |x|
+  board.keys.each do |x|
     if (correct_guesses + turn_guesses).include? x
       colorize(" [ " +  (board[x].center card_width) + " ] ", 31)
     else
@@ -103,12 +103,12 @@ end
 def to_be_square(num)
   golden = 13/7.0
   divisor = 1
-  mults = [] 
+  mults = []
   result = num/divisor
   #binding.pry
-  while true 
+  while true
     #binding.pry
-    divisor += 1    
+    divisor += 1
     if (num/divisor.to_f) == (num/divisor)
       mults.push [divisor, result = num/divisor.to_f]
       if (divisor.to_f / result) > golden
@@ -203,7 +203,7 @@ def set_options(difficulty, data)
     "\t(1) Set difficulty\n\t(2) Set grid size\n\nSelect option: ",
     ["1", "2"]
   )
- 
+
   case response
   when "1"
     difficulty = set_difficulty
@@ -234,7 +234,7 @@ while true
   )
 
   # default options
-  
+
   difficulty = 1
   data = load_data(get_grid_size(1))
 
